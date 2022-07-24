@@ -3,7 +3,8 @@ use warp::{http::{Response, response::Builder, StatusCode}, Reply};
 
 fn base() -> Builder {
   return Response::builder()
-    .header("X-Powered-By", "ArtieFuzzz");
+    .header("X-Powered-By", "ArtieFuzzz")
+    .header("Cache-Control", "public, max-age=7776000");
 }
 /// Returns an OK response
 pub fn success() -> impl Reply {
