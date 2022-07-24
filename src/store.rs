@@ -36,10 +36,9 @@ impl StoreRegistry {
             .cache
             .read()
             .ok()
-            .and_then(|g| g.get::<String>(&key.into()).map(|val| val.clone()))
-            .unwrap();
+            .and_then(|g| g.get::<String>(&key.into()).map(|val| val.clone()));
 
-        return Some(v);
+        return v;
     }
 
     pub fn exists<S: Into<String>>(&self, key: S) -> bool {

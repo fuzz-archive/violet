@@ -6,7 +6,7 @@ mod store;
 #[macro_use]
 extern crate lazy_static;
 
-use rejections::NoContentProvided;
+use rejections::{NoContentProvided, NoValue};
 use std::{collections::HashMap, error::Error};
 use tracing::warn;
 use warp::{http::StatusCode, reject::MethodNotAllowed, Filter};
@@ -52,6 +52,7 @@ async fn handle_rejection(
 ) -> Result<impl warp::Reply, std::convert::Infallible> {
     let message;
     let code: StatusCode;
+
     if err.is_not_found() {
         message = "Could not find that route";
         code = StatusCode::NOT_FOUND
@@ -60,6 +61,9 @@ async fn handle_rejection(
         code = StatusCode::METHOD_NOT_ALLOWED
     } else if let Some(_) = err.find::<NoContentProvided>() {
         message = "NO_CONTENT_PROVIDED";
+        code = StatusCode::BAD_REQUEST
+    } else if let Some(_) = err.find::<NoValue>() {
+        message = "NO_VALUE";
         code = StatusCode::BAD_REQUEST
     } else {
         eprintln!("Unhandled rejection: {:?}", err);
