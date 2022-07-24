@@ -26,16 +26,21 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .and(warp::body::json::<HashMap<String, serde_json::Value>>())
         .and_then(routes::create);
 
-    let fetch = warp::path!("get" / String)
+    let read = warp::path!("get" / String)
         .and(warp::get())
         .and_then(routes::fetch);
+
+    let update = warp::path!("up" / String)
+        .and(warp::patch())
+        .and(warp::body::json::<HashMap<String, serde_json::Value>>())
+        .and_then(routes::update);
 
     let delete = warp::path!("del" / String)
         .and(warp::delete())
         .and_then(routes::delete);
 
     let routes = warp::any()
-        .and(create.or(fetch).or(delete))
+        .and(create.or(read).or(update).or(delete))
         .recover(handle_rejection);
 
     tokio::spawn(async move {

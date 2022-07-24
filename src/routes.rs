@@ -40,3 +40,22 @@ pub async fn delete(key: String) -> Result<impl warp::Reply, warp::Rejection> {
         Err(reject::custom(NoValue))
     }
 }
+
+pub async fn update(
+    key: String,
+    payload: HashMap<String, serde_json::Value>,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    if STORE.lock().unwrap().delete(&key) {
+        let content = payload["content"].as_str();
+
+        if content.unwrap().is_empty() {
+            return Err(reject::custom(NoContentProvided));
+        }
+
+        let _ = &STORE.lock().unwrap().add(key, content.unwrap().to_string());
+
+        Ok(responses::custom("UPDATED".to_string(), StatusCode::OK))
+    } else {
+        Err(reject::custom(NoValue))
+    }
+}
