@@ -8,30 +8,34 @@ extern crate lazy_static;
 
 use rejections::{NoContentProvided, NoValue};
 use std::{collections::HashMap, error::Error};
-use tracing::warn;
+use tracing::{warn, info};
 use warp::{http::StatusCode, reject::MethodNotAllowed, Filter};
+use ansi_term::Color::Blue;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     tracing_subscriber::fmt::init();
 
-    let index = warp::get().and(warp::path!()).map(|| responses::success());
+    println!("VERSION: {}", Blue.paint(env!("CARGO_PKG_VERSION")));
+    println!();
 
-    let create = warp::path!("create" / String)
+    info!("Starting...");
+
+    let create = warp::path!("add" / String)
         .and(warp::post())
         .and(warp::body::json::<HashMap<String, serde_json::Value>>())
         .and_then(routes::create);
 
-    let fetch = warp::path!("fetch" / String)
+    let fetch = warp::path!("get" / String)
         .and(warp::get())
         .and_then(routes::fetch);
 
-    let delete = warp::path!("delete" / String)
+    let delete = warp::path!("del" / String)
         .and(warp::delete())
         .and_then(routes::delete);
 
     let routes = warp::any()
-        .and(index.or(create).or(fetch).or(delete))
+        .and(create.or(fetch).or(delete))
         .recover(handle_rejection);
 
     tokio::spawn(async move {
