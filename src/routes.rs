@@ -13,7 +13,7 @@ lazy_static! {
 pub async fn create(key: String, payload: Body) -> Result<impl warp::Reply, warp::Rejection> {
     let content = payload.content.as_str();
 
-    if content.unwrap().is_empty() {
+    if let None = content {
         return Err(reject::custom(NoContentProvided));
     }
 
