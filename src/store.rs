@@ -42,17 +42,12 @@ impl StoreRegistry {
     }
 
     pub fn exists<S: Into<String>>(&self, key: S) -> bool {
-        if self
+        return self
             .cache
             .read()
             .ok()
             .and_then(|g| Some(g.contains_key(&key.into())))
-            .unwrap()
-        {
-            return true;
-        } else {
-            return false;
-        }
+            .unwrap();
     }
 
     pub fn delete<S: Into<String>>(&self, key: S) -> bool {
