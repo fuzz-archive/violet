@@ -444,6 +444,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "neofiglet"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ad83e1c3cc692c78a3b39999c757f2e97de1a9cfef418a681f7965a12a6701a"
+
+[[package]]
 name = "num_cpus"
 version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1062,6 +1068,7 @@ version = "1.2.2"
 dependencies = [
  "ansi_term",
  "lazy_static",
+ "neofiglet",
  "serde",
  "serde_json",
  "tokio",

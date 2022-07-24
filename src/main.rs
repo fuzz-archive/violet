@@ -13,6 +13,7 @@ use serde_json::Value;
 use std::error::Error;
 use tracing::{info, warn};
 use warp::{http::StatusCode, reject::MethodNotAllowed, Filter};
+use neofiglet::FIGfont;
 
 #[derive(Serialize, Deserialize)]
 pub struct Body {
@@ -23,6 +24,10 @@ pub struct Body {
 async fn main() -> Result<(), Box<dyn Error>> {
     tracing_subscriber::fmt::init();
 
+    let figlet = FIGfont::standard()?;
+    println!("{}", figlet.convert("VioleT").unwrap());
+
+    println!();
     println!("VERSION: {}", Blue.paint(env!("CARGO_PKG_VERSION")));
     println!();
 
