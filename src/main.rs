@@ -6,11 +6,18 @@ mod store;
 #[macro_use]
 extern crate lazy_static;
 
-use rejections::{NoContentProvided, NoValue};
-use std::{collections::HashMap, error::Error};
-use tracing::{warn, info};
-use warp::{http::StatusCode, reject::MethodNotAllowed, Filter};
 use ansi_term::Color::Blue;
+use rejections::{NoContentProvided, NoValue};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::error::Error;
+use tracing::{info, warn};
+use warp::{http::StatusCode, reject::MethodNotAllowed, Filter};
+
+#[derive(Serialize, Deserialize)]
+pub struct Body {
+    content: Value,
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -23,7 +30,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let create = warp::path!("add" / String)
         .and(warp::post())
-        .and(warp::body::json::<HashMap<String, serde_json::Value>>())
+        .and(warp::body::json::<Body>())
         .and_then(routes::create);
 
     let read = warp::path!("get" / String)
@@ -32,7 +39,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let update = warp::path!("up" / String)
         .and(warp::patch())
-        .and(warp::body::json::<HashMap<String, serde_json::Value>>())
+        .and(warp::body::json::<Body>())
         .and_then(routes::update);
 
     let delete = warp::path!("del" / String)

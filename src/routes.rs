@@ -2,7 +2,7 @@ use crate::rejections::NoContentProvided;
 use crate::rejections::NoValue;
 use crate::responses;
 use crate::store;
-use std::collections::HashMap;
+use crate::Body;
 use std::sync::Mutex;
 use warp::{http::StatusCode, reject};
 
@@ -10,11 +10,8 @@ lazy_static! {
     static ref STORE: Mutex<store::StoreRegistry> = Mutex::new(store::StoreRegistry::new());
 }
 
-pub async fn create(
-    key: String,
-    payload: HashMap<String, serde_json::Value>,
-) -> Result<impl warp::Reply, warp::Rejection> {
-    let content = payload["content"].as_str();
+pub async fn create(key: String, payload: Body) -> Result<impl warp::Reply, warp::Rejection> {
+    let content = payload.content.as_str();
 
     if content.unwrap().is_empty() {
         return Err(reject::custom(NoContentProvided));
@@ -41,12 +38,9 @@ pub async fn delete(key: String) -> Result<impl warp::Reply, warp::Rejection> {
     }
 }
 
-pub async fn update(
-    key: String,
-    payload: HashMap<String, serde_json::Value>,
-) -> Result<impl warp::Reply, warp::Rejection> {
+pub async fn update(key: String, payload: Body) -> Result<impl warp::Reply, warp::Rejection> {
     if STORE.lock().unwrap().delete(&key) {
-        let content = payload["content"].as_str();
+        let content = payload.content.as_str();
 
         if content.unwrap().is_empty() {
             return Err(reject::custom(NoContentProvided));
