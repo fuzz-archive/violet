@@ -11,6 +11,7 @@
 ## TODO
 
 - [] Add authentication (Basic Authentication)
+- [] Add the ability to store other primitive types other than strings
 
 ## License
 
