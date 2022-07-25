@@ -26,6 +26,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let figlet = FIGfont::standard()?;
     println!("{}", figlet.convert("VioleT").unwrap());
+    println!("{}", "Volatile In-Memory Database");
 
     println!();
     println!("VERSION: {}", Blue.paint(env!("CARGO_PKG_VERSION")));
