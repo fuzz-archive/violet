@@ -86,7 +86,7 @@ async fn handle_rejection(
         code = StatusCode::BAD_REQUEST
     } else if let Some(_) = err.find::<NoValue>() {
         message = "NO_VALUE";
-        code = StatusCode::BAD_REQUEST
+        code = StatusCode::OK
     } else {
         eprintln!("Unhandled rejection: {:?}", err);
 
