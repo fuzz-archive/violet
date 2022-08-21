@@ -1,19 +1,22 @@
-mod rejections;
-mod responses;
-mod routes;
-mod store;
+mod config;
+mod server;
 
 #[macro_use]
 extern crate lazy_static;
 
 use ansi_term::Color::Blue;
-use rejections::{NoContentProvided, NoValue};
+use neofiglet::FIGfont;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use server::rejections::{NoContentProvided, NoValue};
+use server::responses;
+use server::routes;
 use std::error::Error;
+use std::net::SocketAddr;
 use tracing::{info, warn};
 use warp::{http::StatusCode, reject::MethodNotAllowed, Filter};
-use neofiglet::FIGfont;
+
+use crate::config::read;
 
 #[derive(Serialize, Deserialize)]
 pub struct Body {
@@ -33,6 +36,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     println!();
 
     info!("Starting...");
+
+    let config = read("./config.yml")?;
+    let addr = format!("{}:{}", config.host, config.port).parse::<SocketAddr>()?;
 
     let create = warp::path!("add" / String)
         .and(warp::post())
@@ -64,7 +70,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         std::process::exit(0)
     });
 
-    warp::serve(routes).run(([127, 0, 0, 1], 80)).await;
+    warp::serve(routes).run(addr).await;
 
     Ok(())
 }
@@ -86,7 +92,7 @@ async fn handle_rejection(
         code = StatusCode::BAD_REQUEST
     } else if let Some(_) = err.find::<NoValue>() {
         message = "NO_VALUE";
-        code = StatusCode::OK
+        code = StatusCode::NO_CONTENT
     } else {
         eprintln!("Unhandled rejection: {:?}", err);
 
