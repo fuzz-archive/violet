@@ -84,13 +84,13 @@ async fn handle_rejection(
     if err.is_not_found() {
         message = "Could not find that route";
         code = StatusCode::NOT_FOUND
-    } else if let Some(_) = err.find::<MethodNotAllowed>() {
+    } else if err.find::<MethodNotAllowed>().is_some() {
         message = "METHOD_NOT_ALLOWED";
         code = StatusCode::METHOD_NOT_ALLOWED
-    } else if let Some(_) = err.find::<NoContentProvided>() {
+    } else if err.find::<NoContentProvided>().is_some() {
         message = "NO_CONTENT_PROVIDED";
         code = StatusCode::BAD_REQUEST
-    } else if let Some(_) = err.find::<NoValue>() {
+    } else if err.find::<NoValue>().is_some() {
         message = "NO_VALUE";
         code = StatusCode::NO_CONTENT
     } else {
