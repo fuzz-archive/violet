@@ -36,7 +36,7 @@ impl StoreRegistry {
             .cache
             .read()
             .ok()
-            .and_then(|g| g.get::<String>(&key.into()).map(|val| val.clone()));
+            .and_then(|g| g.get::<String>(&key.into()).cloned());
 
         return v;
     }
@@ -46,7 +46,7 @@ impl StoreRegistry {
             .cache
             .read()
             .ok()
-            .and_then(|g| Some(g.contains_key(&key.into())))
+            .map(|g| g.contains_key(&key.into()))
             .unwrap();
     }
 
