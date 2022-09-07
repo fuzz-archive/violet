@@ -2,7 +2,6 @@ use serde::{Serialize, Deserialize};
 use serde_yaml::{from_reader, Error};
 use std::fs::File;
 
-
 #[derive(Serialize, Deserialize)]
 pub struct Configuration {
   pub port: u16,
